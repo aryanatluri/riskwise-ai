@@ -1,0 +1,38 @@
+# Self-hosted RISKWISE: everything runs inside the client's own infrastructure.
+#   cp .env.example .env   (fill in ENCRYPTION_KEY, POSTGRES_PASSWORD, auth settings)
+#   docker compose up -d db
+#   docker compose run --rm api alembic upgrade head
+#   docker compose up -d api
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: riskwise
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: riskwise
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U riskwise"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build: ./backend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://riskwise:${POSTGRES_PASSWORD}@db:5432/riskwise
+      STORAGE_LOCAL_DIR: /app/data/uploads
+    volumes:
+      - uploads:/app/data/uploads
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  uploads:

@@ -1,0 +1,20 @@
+name: SLA sweep
+
+# Hourly escalation of overdue findings. Free on GitHub Actions; the API can scale to zero.
+# Needs repo secrets RISKWISE_API_URL (e.g. https://api.example.com) and RISKWISE_JOB_TOKEN.
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    if: ${{ vars.SLA_SWEEP_ENABLED == 'true' }}
+    steps:
+      - name: Call sweep endpoint
+        env:
+          API: ${{ secrets.RISKWISE_API_URL }}
+          TOKEN: ${{ secrets.RISKWISE_JOB_TOKEN }}
+        run: |
+          curl --fail-with-body -sS -X POST "$API/api/v1/jobs/sla-sweep" -H "X-Job-Token: $TOKEN"
