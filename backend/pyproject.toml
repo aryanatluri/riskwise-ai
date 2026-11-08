@@ -12,4 +12,5 @@ ignore = ["S101", "B008", "S105", "S106", "S311", "UP040"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 filterwarnings = ["ignore::DeprecationWarning"]
