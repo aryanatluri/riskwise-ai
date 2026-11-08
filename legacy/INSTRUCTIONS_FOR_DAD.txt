@@ -1,0 +1,62 @@
+================================================================================
+🛡️ RISKWISE AI — INSTRUCTIONS & QUICK GUIDE FOR DAD
+================================================================================
+
+Hi Dad! 👋
+
+Here is the prototype app for RISKWISE AI. 
+You can run it on your laptop in 2 seconds WITHOUT touching any terminal or code!
+
+--------------------------------------------------------------------------------
+HOW TO OPEN IT (ZERO SETUP):
+--------------------------------------------------------------------------------
+1. Just DOUBLE-CLICK this file:
+   👉 RISKWISE_AI_Desktop.html
+
+2. It will instantly open in your web browser (Google Chrome, Safari, or Edge).
+   Everything runs right inside your browser without needing to install anything!
+
+--------------------------------------------------------------------------------
+THINGS YOU CAN EXPLORE:
+--------------------------------------------------------------------------------
+• LIGHT / DARK THEME: 
+  The app starts in a clean LIGHT mode. If you ever want to see it in Dark mode, 
+  click the "Dark Mode" button in the top right corner.
+
+• HUMAN REVIEW QUEUE (Main Screen):
+  On the left, you'll see 4 contract risk findings flagged by the AI:
+  - Section 14.2: Breach Notification 5-Day SLA Gap (Critical)
+  - Section 8.1: Global Telemetry Mirroring & Data Residency (Critical)
+  - Section 21.1: $4,850 Disproportionate Liability Cap (High)
+  - Section 18.1: AES-128 & Proprietary Key Governance (High)
+
+  Click on each to see how the AI explains the problem, shows the exact contract 
+  quote, cites the law (like GDPR or DPDPA), and writes a replacement legal clause.
+
+• AUTONOMOUS DISPATCH:
+  Click the purple button: "Authorize & Resume Engine". Watch how it automatically 
+  creates a real enterprise task (Jira) and sends a team alert (Slack).
+
+• POLICY ↔ CONTRACT GAP MATRIX (Tab 3):
+  Click the "Policy ↔ Contract Gap Matrix" tab at the top to see a side-by-side 
+  table comparing vendor terms against corporate rules.
+
+• 24/7 SLA WATCHDOG (Tab 5):
+  Click "Simulate >3-Day SLA Breach" to see the automatic executive escalation 
+  email sent to the VP of Risk if a task is neglected.
+
+--------------------------------------------------------------------------------
+HOW TO GIVE FEEDBACK & SUGGESTIONS:
+--------------------------------------------------------------------------------
+At any time, click the "💬 Feedback & Suggestions" button in the top right header:
+1. Rate the app (1 to 5 stars).
+2. Choose which section you're commenting on.
+3. Type your thoughts, advice, or questions.
+4. Click "Save Suggestion".
+5. Click "Copy for Aryan" — you can then simply paste it into WhatsApp or an 
+   email to me!
+
+Thank you so much for testing this and sharing your advice! ❤️
+
+— Aryan
+================================================================================

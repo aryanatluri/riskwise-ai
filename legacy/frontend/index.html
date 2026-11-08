@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RISKWISE AI — Enterprise Risk Copilot & Autonomous Action Agent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
+              950: '#1e1b4b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #334155; }
+    .pulse-glow { box-shadow: 0 0 20px rgba(99, 102, 241, 0.25); }
+  </style>
+</head>
+<body class="bg-slate-100/70 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white transition-colors duration-200">
+
+  <!-- TOP HEADER & EXECUTIVE OVERVIEW BAR -->
+  <header class="border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur sticky top-0 z-50 shadow-sm dark:shadow-none transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Logo & Branding -->
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-indigo-600/25">
+            <i data-lucide="shield-alert" class="w-6 h-6 text-white"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="text-xl font-black tracking-tight text-slate-900 dark:text-white">RISKWISE <span class="text-indigo-600 dark:text-indigo-400">AI</span></span>
+              <span class="px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider bg-indigo-50 dark:bg-indigo-950 border border-indigo-200 dark:border-indigo-700/60 text-indigo-700 dark:text-indigo-300 rounded-full">
+                Autonomous Action Engine
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">Enterprise Risk Copilot & Governance Dispatch Platform</p>
+          </div>
+        </div>
+
+        <!-- Controls: Theme Switcher, Feedback, AI Settings & Reset -->
+        <div class="flex items-center space-x-2.5 sm:space-x-3">
+          
+          <!-- Theme Toggle Button -->
+          <button onclick="toggleTheme()" id="btn-theme-toggle" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-sm">
+            <i id="theme-toggle-icon" data-lucide="moon" class="w-3.5 h-3.5 text-slate-600 dark:text-amber-400"></i>
+            <span id="theme-toggle-label">Dark Mode</span>
+          </button>
+
+          <!-- Dad's Feedback & Suggestions Button -->
+          <button onclick="openFeedbackModal()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 text-xs font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900 transition shadow-sm">
+            <i data-lucide="message-square-plus" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400"></i>
+            <span class="hidden sm:inline">Feedback &amp; Suggestions</span>
+            <span class="sm:hidden">Feedback</span>
+            <span id="feedback-badge" class="hidden px-1.5 py-0.2 bg-indigo-600 text-white text-[9px] rounded-full font-bold">1</span>
+          </button>
+
+          <!-- AI Engine Status Pill -->
+          <button onclick="openAiSettingsModal()" class="hidden md:flex items-center space-x-2 bg-slate-50 dark:bg-slate-950/80 hover:bg-slate-100 dark:hover:bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 transition">
+            <span id="header-ai-pulse" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-[11px] text-slate-500 dark:text-slate-400">Engine:</span>
+            <span id="header-ai-name" class="text-xs font-semibold text-indigo-700 dark:text-indigo-300">Google Gemini / Rule Engine</span>
+            <i data-lucide="settings" class="w-3.5 h-3.5 text-slate-400 ml-1"></i>
+          </button>
+
+          <!-- Reset Demo Button -->
+          <button onclick="resetDemoWalkthrough()" title="Reset demo state to initial walk-through" class="hidden sm:flex items-center space-x-1.5 bg-slate-100 dark:bg-slate-800/60 hover:bg-slate-200 dark:hover:bg-slate-700 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 transition">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400"></i>
+            <span>Reset Demo</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex space-x-1 border-t border-slate-200 dark:border-slate-800/80 pt-1 -mb-px overflow-x-auto custom-scrollbar">
+        <button onclick="switchTab('reviews')" id="tab-btn-reviews" class="tab-btn px-4 py-2.5 text-xs font-semibold rounded-t-lg transition border-b-2 border-indigo-600 dark:border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-900 flex items-center gap-2 whitespace-nowrap shadow-sm dark:shadow-none">
+          <i data-lucide="check-square" class="w-4 h-4"></i>
+          <span>Human Review Queue</span>
+          <span id="badge-pending-count" class="ml-1 px-1.5 py-0.2 bg-red-100 dark:bg-red-900/80 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-200 text-[10px] rounded-full font-bold">4</span>
+        </button>
+
+        <button onclick="switchTab('sandbox')" id="tab-btn-sandbox" class="tab-btn px-4 py-2.5 text-xs font-semibold rounded-t-lg transition border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900/50 flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span>Contract Ingestion &amp; Sandbox</span>
+        </button>
+
+        <button onclick="switchTab('gapmatrix')" id="tab-btn-gapmatrix" class="tab-btn px-4 py-2.5 text-xs font-semibold rounded-t-lg transition border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900/50 flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="table" class="w-4 h-4"></i>
+          <span>Policy ↔ Contract Gap Matrix</span>
+        </button>
+
+        <button onclick="switchTab('dispatch')" id="tab-btn-dispatch" class="tab-btn px-4 py-2.5 text-xs font-semibold rounded-t-lg transition border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900/50 flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="layers" class="w-4 h-4"></i>
+          <span>Enterprise Dispatch &amp; Jira</span>
+          <span id="badge-dispatched-count" class="ml-1 px-1.5 py-0.2 bg-indigo-100 dark:bg-indigo-950 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 text-[10px] rounded-full font-bold">2</span>
+        </button>
+
+        <button onclick="switchTab('watchdog')" id="tab-btn-watchdog" class="tab-btn px-4 py-2.5 text-xs font-semibold rounded-t-lg transition border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900/50 flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="clock" class="w-4 h-4"></i>
+          <span>24/7 SLA Watchdog</span>
+        </button>
+
+        <button onclick="switchTab('knowledge')" id="tab-btn-knowledge" class="tab-btn px-4 py-2.5 text-xs font-semibold rounded-t-lg transition border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900/50 flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="book-open" class="w-4 h-4"></i>
+          <span>Statutory &amp; Policy Rulebook</span>
+        </button>
+
+        <button onclick="switchTab('architecture')" id="tab-btn-architecture" class="tab-btn px-4 py-2.5 text-xs font-semibold rounded-t-lg transition border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900/50 flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="workflow" class="w-4 h-4"></i>
+          <span>5-Stage Agentic Architecture</span>
+        </button>
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- MAIN APPLICATION CONTENT AREA -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+    <!-- TAB 1: HUMAN-IN-THE-LOOP REVIEW QUEUE (CORE DELIVERABLE) -->
+    <div id="tab-reviews" class="tab-content block">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[640px]">
+        
+        <!-- Left Column: Pending Risk Checkpoints Sidebar -->
+        <div class="lg:col-span-4 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex flex-col shadow-sm dark:shadow-none">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+            <div class="flex items-center space-x-2">
+              <i data-lucide="pause-circle" class="w-4 h-4 text-amber-500 dark:text-amber-400"></i>
+              <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-300">
+                Paused Agent Checkpoints
+              </h2>
+            </div>
+            <span class="text-[11px] text-slate-500 font-mono">HITL Gates</span>
+          </div>
+
+          <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-2 mb-3">
+            The agent pauses execution before ticket creation, waiting for compliance officer authorization.
+          </p>
+
+          <div id="review-threads-list" class="space-y-2.5 overflow-y-auto custom-scrollbar flex-1 pr-1">
+            <div class="animate-pulse flex space-x-4 p-4 bg-slate-50 dark:bg-slate-950/60 rounded-xl">
+              <div class="flex-1 space-y-2">
+                <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-3/4"></div>
+                <div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-1/2"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Deep Inspection, Tri-Party Benchmarks, Explainable AI & Redline Authorization -->
+        <div class="lg:col-span-8 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-sm dark:shadow-none">
+          <div id="review-detail-container" class="space-y-6">
+            <div class="flex items-center justify-center h-80 text-slate-400 text-sm">
+              <i data-lucide="loader-2" class="w-5 h-5 animate-spin mr-2"></i> Loading risk checkpoint...
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: CLAUSE SANDBOX & CONTRACT INGESTION -->
+    <div id="tab-sandbox" class="tab-content hidden">
+      <div class="max-w-4xl mx-auto space-y-6">
+        
+        <!-- 1-Click Demo Ingestion Banner -->
+        <div class="bg-gradient-to-r from-indigo-50 via-purple-50 to-white dark:from-indigo-900/60 dark:via-purple-900/40 dark:to-slate-900 border border-indigo-200 dark:border-indigo-500/40 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm dark:shadow-xl">
+          <div class="flex items-center gap-3.5">
+            <div class="w-10 h-10 rounded-xl bg-indigo-600/10 dark:bg-indigo-600/30 border border-indigo-300 dark:border-indigo-500/50 flex items-center justify-center text-indigo-600 dark:text-indigo-300">
+              <i data-lucide="file-check" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <span>CloudStack Vendor Agreement (2026 Exhibit)</span>
+                <span class="px-2 py-0.5 rounded text-[10px] bg-emerald-100 dark:bg-emerald-950 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300 font-mono">Pre-Packaged Demo</span>
+              </h3>
+              <p class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                Ingest all 4 critical contract clauses simultaneously into the 5-Stage Agentic Pipeline with 1 click.
+              </p>
+            </div>
+          </div>
+          <button onclick="loadAndIngestDemoContract()" id="btn-load-demo-contract" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white font-semibold text-xs transition shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2 whitespace-nowrap">
+            <i data-lucide="zap" class="w-4 h-4 text-amber-300"></i>
+            <span>1-Click Load &amp; Ingest Demo Contract</span>
+          </button>
+        </div>
+
+        <!-- Custom Clause Sandbox -->
+        <div class="bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-5 h-5 text-indigo-600 dark:text-indigo-400"></i>
+                Interactive Clause Sandbox (Try Any Contract Clause)
+              </h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Paste any legal clause or select a preset to test the 5-Stage Agentic Reasoning Engine.
+              </p>
+            </div>
+            <span class="text-xs font-mono text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950 px-2.5 py-1 rounded-lg border border-indigo-200 dark:border-indigo-800">
+              Zero-Hallucination Guardrails
+            </span>
+          </div>
+
+          <!-- Quick Load Walkthrough Scenarios -->
+          <div class="mb-4">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-2">
+              Quick Load Walkthrough Clauses:
+            </span>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="loadPresetClause('breach')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 transition flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                Section 14.2: Breach Notification 5-Day SLA
+              </button>
+              <button onclick="loadPresetClause('residency')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 transition flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                Section 8.1: Global Telemetry Mirroring
+              </button>
+              <button onclick="loadPresetClause('liability')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 transition flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                Section 21.1: $4,850 Liability Cap
+              </button>
+              <button onclick="loadPresetClause('encryption')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 transition flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                Section 18.1: AES-128 &amp; Proprietary Keys
+              </button>
+            </div>
+          </div>
+
+          <!-- Clause Input Form -->
+          <div class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label class="text-xs text-slate-600 dark:text-slate-400 block mb-1">Agreement Name</label>
+                <input type="text" id="sb-contract-title" value="CloudStack Inc. Master Agreement 2026" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-indigo-500">
+              </div>
+              <div>
+                <label class="text-xs text-slate-600 dark:text-slate-400 block mb-1">Section Citation</label>
+                <input type="text" id="sb-section-num" value="Section 14.2" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-indigo-500">
+              </div>
+              <div>
+                <label class="text-xs text-slate-600 dark:text-slate-400 block mb-1">Page Number</label>
+                <input type="number" id="sb-page-num" value="6" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-indigo-500">
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs text-slate-600 dark:text-slate-400 block mb-1">Raw Contract Clause Text</label>
+              <textarea id="sb-clause-text" rows="4" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl p-3 text-xs text-slate-900 dark:text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition leading-relaxed" placeholder="Paste legal clause here..."></textarea>
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+              <span class="text-xs text-slate-500">
+                Benchmarks simultaneously against internal policies (SEC-POL-04, CLOUD-SEC-09) and statutory laws (CERT-In, DPDPA, GDPR).
+              </span>
+              <button onclick="runClauseAnalysis()" id="btn-run-analysis" class="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs px-6 py-2.5 rounded-lg transition shadow-md shadow-indigo-600/25">
+                <i data-lucide="play" class="w-4 h-4"></i>
+                <span>Run 5-Stage Agent Analysis</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- File Upload Card -->
+        <div class="bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-1 flex items-center gap-2">
+            <i data-lucide="file-up" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+            Ingest Full Contract Document (.txt, .pdf, .docx)
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+            Upload an entire contract document to automatically parse clauses and populate the review queue with detected compliance gaps.
+          </p>
+
+          <div class="border-2 border-dashed border-slate-300 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-slate-700 rounded-xl p-6 text-center cursor-pointer transition bg-slate-50/50 dark:bg-slate-950/40">
+            <input type="file" id="contract-file-input" class="hidden" onchange="handleFileUpload(event)">
+            <label for="contract-file-input" class="cursor-pointer block">
+              <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 dark:text-slate-500 mx-auto mb-2"></i>
+              <span class="text-xs text-slate-700 dark:text-slate-300 font-medium block">Click to select contract file from computer</span>
+              <span class="text-[11px] text-slate-500 block mt-1">Supports PDF, Word (.docx), or Plain Text (.txt)</span>
+            </label>
+          </div>
+          <div id="upload-status" class="mt-3 text-xs"></div>
+        </div>
+
+        <!-- Real-Time Analysis Result Card -->
+        <div id="sandbox-result-container" class="hidden"></div>
+
+      </div>
+    </div>
+
+    <!-- TAB 3: POLICY ↔ CONTRACT GAP MATRIX -->
+    <div id="tab-gapmatrix" class="tab-content hidden">
+      <div class="bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-6 shadow-sm dark:shadow-none">
+        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <i data-lucide="table" class="w-5 h-5 text-indigo-600 dark:text-indigo-400"></i>
+              Policy ↔ Contract Gap Matrix
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Automated side-by-side gap benchmarking comparing CloudStack Agreement terms against Apex Financial corporate policies and statutory mandates.
+            </p>
+          </div>
+          <span class="text-xs font-mono text-emerald-800 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 px-3 py-1 rounded-lg font-semibold">
+            Tri-Party Harmonized
+          </span>
+        </div>
+
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 uppercase tracking-wider text-[11px] bg-slate-50 dark:bg-slate-950/60">
+                <th class="py-3 px-4">Domain</th>
+                <th class="py-3 px-4">Internal Policy Requirement</th>
+                <th class="py-3 px-4">Contract Terms</th>
+                <th class="py-3 px-4">Compliance Status</th>
+                <th class="py-3 px-4">Statutory Benchmark &amp; Exposure</th>
+                <th class="py-3 px-4">Recommended Agent Redline</th>
+              </tr>
+            </thead>
+            <tbody id="gap-matrix-tbody" class="divide-y divide-slate-200 dark:divide-slate-800/60 text-slate-800 dark:text-slate-200">
+              <!-- Dynamically populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: ENTERPRISE DISPATCH & JIRA BACKLOG -->
+    <div id="tab-dispatch" class="tab-content hidden">
+      <div class="space-y-6">
+        
+        <div class="bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <i data-lucide="layers" class="w-5 h-5 text-indigo-600 dark:text-indigo-400"></i>
+                Enterprise Dispatch Hub (Atlassian Jira v3 &amp; Slack Block Kit)
+              </h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Every approved redline is automatically converted into an official Jira issue in Atlassian Document Format (ADF) with bi-directional synchronization.
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs bg-indigo-50 dark:bg-indigo-950 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-lg font-semibold">
+                Bi-Directional Closure Active
+              </span>
+            </div>
+          </div>
+
+          <div id="jira-tasks-list" class="space-y-4">
+            <!-- Dynamic Jira cards rendered here -->
+          </div>
+        </div>
+
+        <!-- Slack Notification Feed Preview -->
+        <div class="bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+            <i data-lucide="message-square" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+            Interactive Slack Block Kit Alert Dispatch Feed
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+            Real-time interactive Block Kit alert cards dispatched into the enterprise <code class="text-indigo-700 dark:text-slate-300 bg-indigo-50 dark:bg-slate-950 px-1 py-0.5 rounded font-mono">#compliance-risk-alerts</code> Slack channel.
+          </p>
+
+          <div id="slack-alerts-list" class="space-y-3">
+            <!-- Dynamic Slack cards rendered here -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 5: 24/7 SLA WATCHDOG & ESCALATIONS -->
+    <div id="tab-watchdog" class="tab-content hidden">
+      <div class="space-y-6">
+        
+        <div class="bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-6">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <i data-lucide="clock" class="w-5 h-5 text-rose-500"></i>
+                24/7 SLA Watchdog &amp; Executive Managerial Escalations
+              </h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Scans risk remediation tickets on an hourly daemon. If neglected past deadline, escalates priority; if overdue by &gt; 3 days, automatically emails department VP.
+              </p>
+            </div>
+            
+            <button onclick="triggerSlaBreachSimulation()" id="btn-simulate-breach" class="flex items-center space-x-2 bg-rose-600 hover:bg-rose-700 text-white font-medium text-xs px-4 py-2.5 rounded-lg transition shadow-md shadow-rose-600/25">
+              <i data-lucide="alert-octagon" class="w-4 h-4"></i>
+              <span>Simulate &gt;3-Day SLA Breach (Trigger Escalation)</span>
+            </button>
+          </div>
+
+          <!-- Watchdog Architecture Card -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-4 rounded-xl">
+              <span class="text-xs text-slate-500 dark:text-slate-400 block">Watchdog Daemon State</span>
+              <span class="text-sm font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 mt-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                ACTIVE (APScheduler 3.10)
+              </span>
+              <p class="text-[11px] text-slate-500 mt-1">Runs continuous 3,600s scan against PostgreSQL deadlines.</p>
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-4 rounded-xl">
+              <span class="text-xs text-slate-500 dark:text-slate-400 block">Escalation Rule 1</span>
+              <span class="text-sm font-bold text-amber-600 dark:text-amber-400 mt-1 block">T+0 Hours (Deadline Passed)</span>
+              <p class="text-[11px] text-slate-500 mt-1">Auto-raises Jira ticket priority to Highest; posts timeline alert.</p>
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-4 rounded-xl">
+              <span class="text-xs text-slate-500 dark:text-slate-400 block">Escalation Rule 2</span>
+              <span class="text-sm font-bold text-rose-600 dark:text-rose-400 mt-1 block">T+72 Hours (&gt;3 Days Overdue)</span>
+              <p class="text-[11px] text-slate-500 mt-1">Queries org employee hierarchy and emails HTML memo to VP of Risk.</p>
+            </div>
+          </div>
+
+          <!-- Escalation Memo Preview Area -->
+          <div id="escalation-simulation-display"></div>
+
+          <!-- Webhook Audit Trail -->
+          <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-3 flex items-center gap-2">
+              <i data-lucide="activity" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+              Bi-Directional Webhook &amp; Audit Ledger Logs
+            </h4>
+            <div id="webhook-logs-list" class="space-y-2">
+              <!-- Logs populated via JS -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 6: REGULATORY & POLICY RULEBOOK -->
+    <div id="tab-knowledge" class="tab-content hidden">
+      <div class="bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-6 shadow-sm dark:shadow-none">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="book-open" class="w-5 h-5 text-indigo-600 dark:text-indigo-400"></i>
+            Statutory Regulations &amp; Internal Policy Rulebook
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            The active compliance corpus loaded into RISKWISE AI's dual-benchmarking vector &amp; relational store.
+          </p>
+        </div>
+
+        <div id="benchmarks-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 7: 5-STAGE AGENTIC ARCHITECTURE & PITCH GUIDE -->
+    <div id="tab-architecture" class="tab-content hidden">
+      <div class="space-y-6">
+        
+        <!-- 5-Stage Agentic Lifecycle Card -->
+        <div class="bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none">
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+            <i data-lucide="workflow" class="w-5 h-5 text-indigo-600 dark:text-indigo-400"></i>
+            The 5-Stage Enterprise Agentic Lifecycle
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">
+            Why generic chatbots fail and how an Autonomous Action Agent transforms enterprise legal &amp; compliance productivity.
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+            <div class="bg-slate-50 dark:bg-slate-950 border border-indigo-200 dark:border-indigo-900/60 p-4 rounded-xl">
+              <div class="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 font-bold text-xs flex items-center justify-center mb-2">1</div>
+              <h4 class="text-xs font-bold text-slate-900 dark:text-white">Stage 1: Detect</h4>
+              <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Extracts verbatim factual clauses, page numbers, and exact terms from unstructured paperwork.</p>
+            </div>
+
+            <div class="bg-slate-50 dark:bg-slate-950 border border-indigo-200 dark:border-indigo-900/60 p-4 rounded-xl">
+              <div class="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 font-bold text-xs flex items-center justify-center mb-2">2</div>
+              <h4 class="text-xs font-bold text-slate-900 dark:text-white">Stage 2: Understand</h4>
+              <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Performs tri-party benchmark against internal corporate policies and statutory regulations (DPDPA/CERT-In).</p>
+            </div>
+
+            <div class="bg-slate-50 dark:bg-slate-950 border border-indigo-200 dark:border-indigo-900/60 p-4 rounded-xl">
+              <div class="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 font-bold text-xs flex items-center justify-center mb-2">3</div>
+              <h4 class="text-xs font-bold text-slate-900 dark:text-white">Stage 3: Decide</h4>
+              <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Computes mathematical Composite Risk Score (CRS = Impact &times; 0.6 + Likelihood &times; 0.4 &times; Multiplier).</p>
+            </div>
+
+            <div class="bg-slate-50 dark:bg-slate-950 border border-indigo-200 dark:border-indigo-900/60 p-4 rounded-xl">
+              <div class="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 font-bold text-xs flex items-center justify-center mb-2">4</div>
+              <h4 class="text-xs font-bold text-slate-900 dark:text-white">Stage 4: Act</h4>
+              <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Writes legal redlines, pauses at Human-in-the-Loop review gate, and drafts vendor negotiation email.</p>
+            </div>
+
+            <div class="bg-slate-50 dark:bg-slate-950 border border-indigo-200 dark:border-indigo-900/60 p-4 rounded-xl">
+              <div class="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 font-bold text-xs flex items-center justify-center mb-2">5</div>
+              <h4 class="text-xs font-bold text-slate-900 dark:text-white">Stage 5: Monitor</h4>
+              <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-1">24/7 SLA watchdog escalates overdue items; Jira webhook provides automated bi-directional closure.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chatbot vs Autonomous Agent Comparison -->
+        <div class="bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-3">Enterprise Comparison: Passive Chatbot vs. Autonomous Action Agent</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[11px] uppercase bg-slate-50 dark:bg-transparent">
+                  <th class="py-2.5 px-4">Evaluation Dimension</th>
+                  <th class="py-2.5 px-4 text-rose-600 dark:text-rose-400 font-bold">Generic AI Chatbot (Passive)</th>
+                  <th class="py-2.5 px-4 text-emerald-600 dark:text-emerald-400 font-bold">RISKWISE AI (Autonomous Action Agent)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
+                <tr>
+                  <td class="py-2.5 px-4 font-semibold text-slate-900 dark:text-slate-200">Execution Trigger</td>
+                  <td class="py-2.5 px-4 text-slate-500 dark:text-slate-400">Passive (Waits for human prompt in chat box)</td>
+                  <td class="py-2.5 px-4 text-emerald-700 dark:text-emerald-300 font-semibold">Autonomous pipeline triggered upon document ingestion</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-4 font-semibold text-slate-900 dark:text-slate-200">Output Nature</td>
+                  <td class="py-2.5 px-4 text-slate-500 dark:text-slate-400">Informational text summary / chat message</td>
+                  <td class="py-2.5 px-4 text-emerald-700 dark:text-emerald-300 font-semibold">Actionable legal redlines, Jira tickets, and Slack alerts</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-4 font-semibold text-slate-900 dark:text-slate-200">Risk Measurement</td>
+                  <td class="py-2.5 px-4 text-slate-500 dark:text-slate-400">Subjective adjectives ("This looks risky")</td>
+                  <td class="py-2.5 px-4 text-emerald-700 dark:text-emerald-300 font-semibold">Normalized Composite Risk Score (CRS: 1.0 to 10.0)</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-4 font-semibold text-slate-900 dark:text-slate-200">Accountability &amp; Closure</td>
+                  <td class="py-2.5 px-4 text-slate-500 dark:text-slate-400">Zero tracking; risks stay trapped in chat window</td>
+                  <td class="py-2.5 px-4 text-emerald-700 dark:text-emerald-300 font-semibold">Dispatched to real owners with SLA watchdog and webhook closure</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- DAD'S FEEDBACK & SUGGESTIONS MODAL / DRAWER -->
+  <div id="feedback-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl transition-colors">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+            <i data-lucide="message-square-plus" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white">Share Feedback &amp; Suggestions</h3>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">Tell us what you like, what feels confusing, or what to improve!</p>
+          </div>
+        </div>
+        <button onclick="closeFeedbackModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3.5 text-xs">
+        
+        <!-- Overall Rating -->
+        <div>
+          <label class="text-slate-700 dark:text-slate-300 block mb-1 font-semibold">How clear and useful does this feel to you?</label>
+          <div class="flex items-center space-x-1" id="star-rating-container">
+            <button type="button" onclick="setStarRating(1)" class="star-btn text-amber-400 hover:scale-110 transition"><i data-lucide="star" class="w-5 h-5 fill-amber-400"></i></button>
+            <button type="button" onclick="setStarRating(2)" class="star-btn text-amber-400 hover:scale-110 transition"><i data-lucide="star" class="w-5 h-5 fill-amber-400"></i></button>
+            <button type="button" onclick="setStarRating(3)" class="star-btn text-amber-400 hover:scale-110 transition"><i data-lucide="star" class="w-5 h-5 fill-amber-400"></i></button>
+            <button type="button" onclick="setStarRating(4)" class="star-btn text-amber-400 hover:scale-110 transition"><i data-lucide="star" class="w-5 h-5 fill-amber-400"></i></button>
+            <button type="button" onclick="setStarRating(5)" class="star-btn text-amber-400 hover:scale-110 transition"><i data-lucide="star" class="w-5 h-5 fill-amber-400"></i></button>
+            <span id="star-rating-label" class="ml-2 text-xs font-semibold text-slate-600 dark:text-slate-300">5 / 5 — Excellent</span>
+          </div>
+        </div>
+
+        <!-- Section Categorization -->
+        <div>
+          <label class="text-slate-700 dark:text-slate-300 block mb-1 font-semibold">Which part are you giving feedback on?</label>
+          <select id="feedback-area" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500">
+            <option value="General Impressions">General Look, Feel &amp; Usability</option>
+            <option value="Human Review Queue">Human Review Queue &amp; Redlines</option>
+            <option value="Policy-Contract Gap Matrix">Policy ↔ Contract Gap Matrix</option>
+            <option value="Enterprise Dispatch & Jira">Enterprise Dispatch &amp; Jira Tickets</option>
+            <option value="Vendor Email Notice">AI-Drafted Vendor Negotiation Email</option>
+            <option value="24/7 SLA Watchdog">24/7 SLA Watchdog &amp; Manager Escalation</option>
+            <option value="Other Suggestions">Other Ideas or Feature Requests</option>
+          </select>
+        </div>
+
+        <!-- Note Textarea -->
+        <div>
+          <label class="text-slate-700 dark:text-slate-300 block mb-1 font-semibold">Your thoughts, advice, or suggestions:</label>
+          <textarea id="feedback-text" rows="4" placeholder="E.g. The gap matrix is very clear. For the email draft, maybe add a phone number field..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl p-3 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500 transition leading-relaxed"></textarea>
+        </div>
+
+        <!-- Existing Saved Feedback List -->
+        <div id="saved-feedback-section" class="hidden pt-2 border-t border-slate-200 dark:border-slate-800">
+          <span class="text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider block mb-1.5">Saved Feedback &amp; Notes:</span>
+          <div id="saved-feedback-list" class="space-y-2 max-h-36 overflow-y-auto custom-scrollbar pr-1"></div>
+        </div>
+
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <button onclick="copyFeedbackForAryan()" id="btn-copy-feedback" class="w-full sm:w-auto px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold transition flex items-center justify-center gap-1.5">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span>Copy for Aryan</span>
+          </button>
+          <button onclick="downloadFeedbackFile()" class="w-full sm:w-auto px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold transition flex items-center justify-center gap-1.5">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>Export File</span>
+          </button>
+        </div>
+
+        <button onclick="saveFeedbackItem()" class="w-full sm:w-auto px-5 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition shadow-md shadow-indigo-600/25 flex items-center justify-center gap-1.5">
+          <i data-lucide="check" class="w-3.5 h-3.5"></i>
+          <span>Save Suggestion</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI ENGINE SETTINGS MODAL -->
+  <div id="ai-settings-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl transition-colors">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i data-lucide="cpu" class="w-4 h-4 text-indigo-600 dark:text-indigo-400"></i>
+          AI Engine &amp; Reasoning Configuration
+        </h3>
+        <button onclick="closeAiSettingsModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="text-slate-700 dark:text-slate-400 block mb-1 font-semibold">Google Gemini API Key (Optional)</label>
+          <input type="password" id="input-gemini-key" placeholder="AIzaSy... (Leave empty for Offline Deterministic Engine)" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-indigo-500 font-mono">
+          <p class="text-[11px] text-slate-500 mt-1">If empty, runs on the built-in deterministic reasoning engine with zero latency and 100% reliability.</p>
+        </div>
+
+        <div>
+          <label class="text-slate-700 dark:text-slate-400 block mb-1 font-semibold">Gemini Model</label>
+          <select id="select-gemini-model" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-indigo-500">
+            <option value="gemini-2.0-flash">Google Gemini 2.0 Flash (Recommended)</option>
+            <option value="gemini-1.5-flash">Google Gemini 1.5 Flash</option>
+            <option value="gemini-1.5-pro">Google Gemini 1.5 Pro</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeAiSettingsModal()" class="px-4 py-2 text-xs text-slate-500 hover:text-slate-800 dark:hover:text-white">Cancel</button>
+        <button onclick="saveAiSettings()" class="px-5 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition shadow-md shadow-indigo-600/25">
+          Save Configuration
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <script>
+    let currentThreadId = null;
+    let currentThreadData = null;
+    let currentStarRating = 5;
+
+    // --- THEME MANAGEMENT (LIGHT BY DEFAULT) ---
+    function initTheme() {
+      const saved = localStorage.getItem('riskwise_theme') || 'light';
+      applyTheme(saved);
+    }
+
+    function applyTheme(theme) {
+      const html = document.documentElement;
+      const icon = document.getElementById('theme-toggle-icon');
+      const label = document.getElementById('theme-toggle-label');
+
+      if (theme === 'dark') {
+        html.classList.add('dark');
+        if (label) label.innerText = "Light Mode";
+        if (icon) icon.setAttribute('data-lucide', 'sun');
+      } else {
+        html.classList.remove('dark');
+        if (label) label.innerText = "Dark Mode";
+        if (icon) icon.setAttribute('data-lucide', 'moon');
+      }
+      localStorage.setItem('riskwise_theme', theme);
+      lucide.createIcons();
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.contains('dark');
+      applyTheme(isDark ? 'light' : 'dark');
+    }
+
+    // --- DAD'S FEEDBACK & SUGGESTIONS ---
+    function openFeedbackModal() {
+      document.getElementById('feedback-modal').classList.remove('hidden');
+      renderSavedFeedbackList();
+      lucide.createIcons();
+    }
+
+    function closeFeedbackModal() {
+      document.getElementById('feedback-modal').classList.add('hidden');
+    }
+
+    function setStarRating(num) {
+      currentStarRating = num;
+      const labels = [
+        "1 / 5 — Needs Major Work",
+        "2 / 5 — Somewhat Confusing",
+        "3 / 5 — Decent / Promising",
+        "4 / 5 — Very Good & Clear",
+        "5 / 5 — Excellent & Impressive"
+      ];
+      document.getElementById('star-rating-label').innerText = labels[num - 1];
+      const buttons = document.querySelectorAll('.star-btn');
+      buttons.forEach((btn, idx) => {
+        const starIcon = btn.querySelector('svg, i');
+        if (idx < num) {
+          btn.className = "star-btn text-amber-400 hover:scale-110 transition";
+          if (starIcon) starIcon.classList.add('fill-amber-400');
+        } else {
+          btn.className = "star-btn text-slate-300 dark:text-slate-600 hover:scale-110 transition";
+          if (starIcon) starIcon.classList.remove('fill-amber-400');
+        }
+      });
+      lucide.createIcons();
+    }
+
+    function getSavedFeedback() {
+      try {
+        return JSON.parse(localStorage.getItem('riskwise_feedback_items') || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveFeedbackItem() {
+      const text = document.getElementById('feedback-text').value.trim();
+      const area = document.getElementById('feedback-area').value;
+      if (!text) {
+        alert("Please type a comment or suggestion before saving.");
+        return;
+      }
+
+      const items = getSavedFeedback();
+      const newItem = {
+        id: 'fb-' + Date.now(),
+        date: new Date().toLocaleString(),
+        rating: currentStarRating,
+        area: area,
+        text: text
+      };
+      items.unshift(newItem);
+      localStorage.setItem('riskwise_feedback_items', JSON.stringify(items));
+      document.getElementById('feedback-text').value = '';
+
+      // Update badge
+      updateFeedbackBadge();
+      renderSavedFeedbackList();
+      alert("Thank you! Your suggestion has been saved. You can click 'Copy for Aryan' to share it anytime.");
+    }
+
+    function renderSavedFeedbackList() {
+      const items = getSavedFeedback();
+      const container = document.getElementById('saved-feedback-list');
+      const section = document.getElementById('saved-feedback-section');
+      if (items.length === 0) {
+        section.classList.add('hidden');
+        return;
+      }
+      section.classList.remove('hidden');
+      container.innerHTML = items.map(it => `
+        <div class="p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-xs space-y-1">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="font-bold text-indigo-700 dark:text-indigo-400">${it.area} &bull; ${'★'.repeat(it.rating)}</span>
+            <span class="text-slate-400">${it.date}</span>
+          </div>
+          <p class="text-slate-700 dark:text-slate-300">${it.text}</p>
+        </div>
+      `).join('');
+    }
+
+    function updateFeedbackBadge() {
+      const items = getSavedFeedback();
+      const badge = document.getElementById('feedback-badge');
+      if (items.length > 0) {
+        badge.innerText = items.length;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    function copyFeedbackForAryan() {
+      const items = getSavedFeedback();
+      if (items.length === 0) {
+        alert("No suggestions saved yet! Type your thoughts in the box and click 'Save Suggestion' first.");
+        return;
+      }
+      let summary = "📋 RISKWISE AI — FEEDBACK & SUGGESTIONS\n";
+      summary += "========================================\n\n";
+      items.forEach((it, idx) => {
+        summary += `[#${idx + 1}] Area: ${it.area} | Rating: ${it.rating}/5 stars (${it.date})\n`;
+        summary += `Feedback: ${it.text}\n\n`;
+      });
+      navigator.clipboard.writeText(summary);
+      alert("Copied to clipboard! You can now paste this directly into WhatsApp or an email to Aryan.");
+    }
+
+    function downloadFeedbackFile() {
+      const items = getSavedFeedback();
+      if (items.length === 0) {
+        alert("No suggestions saved yet! Type your thoughts and save first.");
+        return;
+      }
+      let summary = "RISKWISE AI — FEEDBACK & SUGGESTIONS\n";
+      summary += "====================================\n\n";
+      items.forEach((it, idx) => {
+        summary += `[#${idx + 1}] Area: ${it.area} | Rating: ${it.rating}/5 (${it.date})\n`;
+        summary += `Comment: ${it.text}\n\n`;
+      });
+      const blob = new Blob([summary], { type: "text/plain;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "RISKWISE_Feedback_For_Aryan.txt";
+      a.click();
+    }
+
+    // --- NAVIGATION TAB SWITCHER ---
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-indigo-600', 'dark:border-indigo-500', 'text-indigo-600', 'dark:text-indigo-400', 'bg-white', 'dark:bg-slate-900', 'shadow-sm');
+        btn.classList.add('border-transparent', 'text-slate-600', 'dark:text-slate-400');
+      });
+
+      const activeTab = document.getElementById(`tab-${tabName}`);
+      if (activeTab) activeTab.classList.remove('hidden');
+
+      const activeBtn = document.getElementById(`tab-btn-${tabName}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('border-transparent', 'text-slate-600', 'dark:text-slate-400');
+        activeBtn.classList.add('border-indigo-600', 'dark:border-indigo-500', 'text-indigo-600', 'dark:text-indigo-400', 'bg-white', 'dark:bg-slate-900', 'shadow-sm');
+      }
+
+      if (tabName === 'dispatch') loadJiraTasks();
+      if (tabName === 'watchdog') loadWatchdogData();
+      if (tabName === 'gapmatrix') loadGapMatrix();
+      if (tabName === 'knowledge') loadBenchmarks();
+
+      lucide.createIcons();
+    }
+
+    // Load AI Engine Status
+    async function loadEngineStatus() {
+      try {
+        const res = await fetch('/api/v1/agent/status');
+        const data = await res.json();
+        const headerName = document.getElementById('header-ai-name');
+        const headerPulse = document.getElementById('header-ai-pulse');
+        if (data.gemini_active) {
+          headerName.innerText = data.active_engine;
+          headerPulse.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
+        } else {
+          headerName.innerText = "Deterministic Rule Engine (Offline)";
+          headerPulse.className = "w-2 h-2 rounded-full bg-indigo-500";
+        }
+      } catch (e) {
+        console.error("Could not fetch engine status", e);
+      }
+    }
+
+    function openAiSettingsModal() {
+      document.getElementById('ai-settings-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeAiSettingsModal() {
+      document.getElementById('ai-settings-modal').classList.add('hidden');
+    }
+
+    async function saveAiSettings() {
+      const key = document.getElementById('input-gemini-key').value;
+      const model = document.getElementById('select-gemini-model').value;
+      try {
+        const res = await fetch('/api/v1/agent/config', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ gemini_api_key: key, gemini_model: model })
+        });
+        const d = await res.json();
+        closeAiSettingsModal();
+        loadEngineStatus();
+        alert(d.status.gemini_active ? "Successfully configured Google Gemini!" : "Switched to Deterministic Enterprise Rule Engine.");
+      } catch (err) {
+        alert("Configuration error: " + err);
+      }
+    }
+
+    // 1-Click Demo Reset
+    async function resetDemoWalkthrough() {
+      if (!confirm("Reset demo queue and audit logs back to initial walkthrough state?")) return;
+      try {
+        const res = await fetch('/api/v1/reviews/reset', { method: 'POST' });
+        const d = await res.json();
+        loadPendingReviews();
+        loadJiraTasks();
+        loadWatchdogData();
+        loadGapMatrix();
+        alert(d.message);
+      } catch (e) {
+        alert("Reset failed: " + e);
+      }
+    }
+
+    // 1-Click Load & Ingest Demo Contract
+    async function loadAndIngestDemoContract() {
+      const btn = document.getElementById('btn-load-demo-contract');
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Ingesting 4 Clauses...</span>`;
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/v1/analyze/demo-contract', { method: 'POST' });
+        const d = await res.json();
+        btn.innerHTML = `<i data-lucide="check" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i><span>Ingested Successfully!</span>`;
+        setTimeout(() => {
+          btn.innerHTML = `<i data-lucide="zap" class="w-4 h-4 text-amber-300"></i><span>1-Click Load &amp; Ingest Demo Contract</span>`;
+          btn.disabled = false;
+        }, 2000);
+        switchTab('reviews');
+        loadPendingReviews();
+      } catch (e) {
+        alert("Demo ingestion failed: " + e);
+        btn.disabled = false;
+      }
+    }
+
+    // Load Pending Review Threads
+    async function loadPendingReviews() {
+      try {
+        const res = await fetch('/api/v1/reviews/pending');
+        const data = await res.json();
+        document.getElementById('badge-pending-count').innerText = data.length;
+
+        const listContainer = document.getElementById('review-threads-list');
+        if (data.length === 0) {
+          listContainer.innerHTML = `
+            <div class="p-6 text-center text-slate-500">
+              <i data-lucide="check-circle-2" class="w-8 h-8 mx-auto mb-2 text-emerald-500"></i>
+              <p class="text-xs font-semibold text-slate-800 dark:text-slate-200">All risk checkpoints reviewed &amp; dispatched!</p>
+              <button onclick="resetDemoWalkthrough()" class="mt-3 text-[11px] text-indigo-600 dark:text-indigo-400 underline">Reset Demo Queue</button>
+            </div>
+          `;
+          document.getElementById('review-detail-container').innerHTML = `
+            <div class="flex flex-col items-center justify-center h-80 text-center text-slate-600 dark:text-slate-400 space-y-3">
+              <div class="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950 border border-emerald-300 dark:border-emerald-700 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                <i data-lucide="shield-check" class="w-6 h-6"></i>
+              </div>
+              <h3 class="font-bold text-slate-900 dark:text-white text-base">Human Review Queue Clear</h3>
+              <p class="text-xs max-w-sm text-slate-500 dark:text-slate-400">All paused checkpoints have been authorized and dispatched to Jira and Slack.</p>
+              <button onclick="switchTab('dispatch')" class="text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition shadow-md shadow-indigo-600/20">
+                View Dispatched Jira Tasks &rarr;
+              </button>
+            </div>
+          `;
+          lucide.createIcons();
+          return;
+        }
+
+        listContainer.innerHTML = data.map(item => `
+          <div onclick="selectThread('${item.thread_id}')" id="thread-item-${item.thread_id}" class="p-3.5 bg-slate-50 dark:bg-slate-950/70 hover:bg-slate-100 dark:hover:bg-slate-800/60 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-xl cursor-pointer transition flex flex-col space-y-1.5 ${item.thread_id === currentThreadId ? 'bg-indigo-50/80 dark:bg-indigo-900/30 border-indigo-500 dark:border-indigo-500 shadow-sm' : ''}">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded ${item.highest_severity === 'CRITICAL' ? 'bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800' : 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800'}">
+                ${item.highest_severity} RISK
+              </span>
+              <span class="text-[11px] font-mono text-slate-500 dark:text-slate-400">CRS: <strong class="${item.composite_risk_score >= 8 ? 'text-red-600 dark:text-red-400' : 'text-amber-600 dark:text-amber-400'}">${item.composite_risk_score}</strong></span>
+            </div>
+            <h4 class="text-xs font-bold text-slate-900 dark:text-slate-200 line-clamp-1">${item.section_title}</h4>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1">${item.counterparty} &bull; Page ${item.page_number}</p>
+          </div>
+        `).join('');
+
+        lucide.createIcons();
+
+        if (!currentThreadId || !data.some(d => d.thread_id === currentThreadId)) {
+          selectThread(data[0].thread_id);
+        }
+      } catch (e) {
+        console.error("Error loading pending reviews", e);
+      }
+    }
+
+    // Select and Deeply Inspect a Thread
+    async function selectThread(threadId) {
+      currentThreadId = threadId;
+      document.querySelectorAll('#review-threads-list > div').forEach(el => {
+        el.classList.remove('bg-indigo-50/80', 'dark:bg-indigo-900/30', 'border-indigo-500', 'shadow-sm');
+      });
+      const activeEl = document.getElementById(`thread-item-${threadId}`);
+      if (activeEl) activeEl.classList.add('bg-indigo-50/80', 'dark:bg-indigo-900/30', 'border-indigo-500', 'shadow-sm');
+
+      const res = await fetch(`/api/v1/reviews/${threadId}`);
+      const d = await res.json();
+      currentThreadData = d;
+
+      const act = d.pending_actions?.[0] || {};
+      const exp = d.explainable_ai || {};
+      const email = d.vendor_email || {};
+      const crs = d.quantitative_metrics?.composite_risk_score || 8.5;
+      const crsPct = (crs / 10.0) * 100;
+
+      const html = `
+        <!-- Top Section & Coordinates -->
+        <div class="flex items-start justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-[11px] font-mono text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-800">
+                Checkpoint Thread: ${d.thread_id}
+              </span>
+              <span class="text-xs text-slate-500">&bull; Page ${d.page_number} &bull; Section ${d.section_number}</span>
+            </div>
+            <h1 class="text-xl font-bold text-slate-900 dark:text-white">${d.section_title}</h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${d.contract_title} &bull; Counterparty: <strong class="text-slate-700 dark:text-slate-300">${d.counterparty}</strong></p>
+          </div>
+
+          <!-- Composite Risk Score Gauge -->
+          <div class="text-right bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 min-w-[170px]">
+            <span class="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider block font-bold">Composite Risk Score</span>
+            <div class="flex items-baseline justify-end gap-1 mt-0.5">
+              <span class="text-2xl font-black ${crs >= 8 ? 'text-red-600 dark:text-red-400' : 'text-amber-600 dark:text-amber-400'}">${crs}</span>
+              <span class="text-xs text-slate-500">/ 10.0</span>
+            </div>
+            <div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full mt-1.5 overflow-hidden">
+              <div class="h-full ${crs >= 8 ? 'bg-red-500' : 'bg-amber-500'} rounded-full" style="width: ${crsPct}%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EXPLAINABLE AI REASONING FRAMEWORK -->
+        ${exp.claim ? `
+          <div class="bg-indigo-50/70 dark:bg-gradient-to-r dark:from-indigo-950/70 dark:via-slate-950 dark:to-slate-950 border border-indigo-200 dark:border-indigo-500/40 rounded-xl p-4 space-y-2.5">
+            <div class="flex items-center justify-between border-b border-indigo-200 dark:border-indigo-900/50 pb-2">
+              <span class="text-[11px] uppercase font-bold tracking-wider text-indigo-800 dark:text-indigo-300 flex items-center gap-1.5">
+                <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
+                Explainable AI Framework (Claim &rarr; Evidence &rarr; Reasoning)
+              </span>
+              <span class="text-[10px] font-mono text-emerald-800 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 rounded border border-emerald-300 dark:border-emerald-800 font-bold">
+                Confidence: ${exp.confidence_pct || 98.0}%
+              </span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <div>
+                <span class="text-[10px] uppercase font-semibold text-slate-500 block">AI Detected Claim</span>
+                <p class="text-slate-800 dark:text-slate-200 font-medium">${exp.claim}</p>
+              </div>
+              <div>
+                <span class="text-[10px] uppercase font-semibold text-slate-500 block">Conflict Reasoning</span>
+                <p class="text-slate-600 dark:text-slate-300 text-[11px]">${exp.conflict_reasoning}</p>
+              </div>
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- Stage 1: Contract Evidence Quote -->
+        <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/90 rounded-xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] uppercase font-bold tracking-wider text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+              <i data-lucide="file-search" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400"></i>
+              Stage 1 (Detect): Verbatim Contract Quote Evidence
+            </span>
+            <span class="text-[10px] text-emerald-800 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-300 dark:border-emerald-800 font-mono font-bold">
+              Factual Grounding: 100%
+            </span>
+          </div>
+          <blockquote class="border-l-4 border-indigo-600 pl-4 py-2 italic text-slate-800 dark:text-slate-200 text-xs font-serif bg-white dark:bg-slate-900/60 rounded-r leading-relaxed shadow-sm dark:shadow-none">
+            "${d.raw_clause_text}"
+          </blockquote>
+        </div>
+
+        <!-- Stage 2: Tri-Party Gap Benchmarking -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <!-- Corporate Policy Benchmark -->
+          <div class="bg-blue-50/60 dark:bg-slate-950 border border-blue-200/80 dark:border-slate-800 rounded-xl p-4">
+            <span class="text-[11px] uppercase font-bold tracking-wider text-blue-800 dark:text-blue-400 flex items-center gap-1 mb-2">
+              <i data-lucide="building" class="w-3.5 h-3.5"></i>
+              Internal Policy Benchmark
+            </span>
+            ${(d.retrieved_policies || []).map(p => `
+              <div class="space-y-1 text-xs">
+                <p class="font-bold text-slate-900 dark:text-slate-200">${p.policy_code} &bull; ${p.title || p.clause_code}</p>
+                <p class="text-slate-600 dark:text-slate-400 text-[11px]">${p.mandate}</p>
+                ${p.delta ? `<div class="mt-2 p-2 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded text-[11px] text-amber-800 dark:text-amber-300 font-mono"><strong class="text-amber-900 dark:text-amber-200">Policy Gap:</strong> ${p.delta}</div>` : ''}
+              </div>
+            `).join('')}
+          </div>
+
+          <!-- Statutory Regulations Benchmark -->
+          <div class="bg-rose-50/60 dark:bg-slate-950 border border-rose-200/80 dark:border-slate-800 rounded-xl p-4">
+            <span class="text-[11px] uppercase font-bold tracking-wider text-rose-800 dark:text-rose-400 flex items-center gap-1 mb-2">
+              <i data-lucide="scale" class="w-3.5 h-3.5"></i>
+              Statutory Law Benchmark
+            </span>
+            <div class="space-y-2 text-xs">
+              ${(d.retrieved_regulations || []).map(r => `
+                <div class="border-b border-rose-200/70 dark:border-slate-800/80 pb-2 last:border-0 last:pb-0">
+                  <p class="font-bold text-slate-900 dark:text-slate-200">${r.regulation_name || r.regulation} (${r.section || ''})</p>
+                  <p class="text-slate-600 dark:text-slate-400 text-[11px]">${r.rule || r.mandate_sla || ''}</p>
+                  ${r.delta ? `<p class="text-rose-700 dark:text-rose-400 font-mono text-[10px] mt-1 font-semibold">${r.delta}</p>` : ''}
+                  ${r.exposure ? `<p class="text-rose-700 dark:text-rose-400 font-mono text-[10px] mt-1">${r.exposure}</p>` : ''}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Stage 3: Quantitative Math Breakdown -->
+        <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 px-4 flex flex-col sm:flex-row sm:items-center justify-between text-xs gap-2">
+          <div class="flex items-center gap-2">
+            <i data-lucide="calculator" class="w-4 h-4 text-indigo-600 dark:text-indigo-400"></i>
+            <span class="text-slate-600 dark:text-slate-400">Risk Math Formula:</span>
+            <span class="font-mono text-slate-800 dark:text-slate-200 text-[11px] bg-white dark:bg-slate-900 px-2 py-0.5 rounded border border-slate-300 dark:border-slate-800 shadow-sm">
+              CRS = min(10.0, (Impact: ${d.quantitative_metrics?.impact_score} &times; 0.6 + Likelihood: ${d.quantitative_metrics?.likelihood_score} &times; 0.4) &times; Exp: ${d.quantitative_metrics?.exposure_multiplier})
+            </span>
+          </div>
+          <span class="text-slate-600 dark:text-slate-400 text-[11px]">Normalized: <strong class="text-emerald-600 dark:text-emerald-400">${crs} / 10.0</strong></span>
+        </div>
+
+        <!-- Stage 4: Mandatory Replacement Legal Redline (Editable) -->
+        <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+            <span class="text-[11px] uppercase font-bold tracking-wider text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+              Stage 4 (Act): Mandatory Replacement Legal Redline
+            </span>
+            <span class="text-[11px] text-slate-500 font-mono">Editable by Reviewer</span>
+          </div>
+
+          <textarea id="live-redline-input" rows="3" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 focus:border-indigo-500 rounded-lg p-3 text-xs text-emerald-900 dark:text-emerald-400 font-mono focus:outline-none transition leading-relaxed shadow-sm dark:shadow-none">${act.proposed_redline || ''}</textarea>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            <div>
+              <label class="text-[11px] text-slate-600 dark:text-slate-400 block mb-1 font-semibold">Assigned Infosec / Legal Owner</label>
+              <select id="select-owner" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none">
+                <option value="arun.sharma@apexfinancial.com" ${act.suggested_owner?.includes('arun') ? 'selected' : ''}>Arun Sharma (Lead InfoSec Operations)</option>
+                <option value="kavita.deshmukh@apexfinancial.com" ${act.suggested_owner?.includes('kavita') ? 'selected' : ''}>Kavita Deshmukh (Senior Legal Counsel)</option>
+                <option value="compliance-officer@apexfinancial.com" ${act.suggested_owner?.includes('compliance') ? 'selected' : ''}>Aditi Rao (Principal Compliance Officer)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-[11px] text-slate-600 dark:text-slate-400 block mb-1 font-semibold">Target Resolution SLA</label>
+              <select id="select-sla-days" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none">
+                <option value="2" ${act.sla_days === 2 ? 'selected' : ''}>2 Business Days (High Priority Target)</option>
+                <option value="3" ${act.sla_days === 3 ? 'selected' : ''}>3 Business Days</option>
+                <option value="5" ${act.sla_days === 5 ? 'selected' : ''}>5 Business Days</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- AI-Drafted Vendor Negotiation Email Preview -->
+          ${email.subject ? `
+            <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-300 flex items-center gap-1.5">
+                  <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+                  AI-Drafted Vendor Negotiation Email Notice
+                </span>
+                <button onclick="copyVendorEmailDraft()" class="text-[11px] text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 font-semibold">
+                  <i data-lucide="copy" class="w-3 h-3"></i> Copy Email Draft
+                </button>
+              </div>
+              <div class="p-3 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-lg text-xs space-y-1 font-mono text-slate-800 dark:text-slate-300 shadow-sm dark:shadow-none">
+                <p><span class="text-slate-500">To:</span> <strong class="text-indigo-600 dark:text-indigo-300">${email.to}</strong></p>
+                <p><span class="text-slate-500">Subject:</span> <strong>${email.subject}</strong></p>
+                <div class="pt-2 text-[11px] text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed border-t border-slate-200 dark:border-slate-800/80 font-sans">${email.body}</div>
+              </div>
+            </div>
+          ` : ''}
+
+          <div class="flex items-center justify-between mt-5 pt-4 border-t border-slate-200 dark:border-slate-800">
+            <span class="text-xs text-slate-500 dark:text-slate-400">
+              Authorizing dispatches Jira issue, Slack Block Kit alert, and unfreezes agent.
+            </span>
+
+            <div class="flex items-center space-x-3">
+              <button onclick="handleRejectCheckpoint('${d.thread_id}')" class="px-4 py-2 rounded-lg text-xs font-semibold bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 border border-slate-300 dark:border-slate-700 transition">
+                Reject Finding
+              </button>
+              
+              <button onclick="handleApproveCheckpoint('${d.thread_id}', '${act.action_id}')" id="btn-authorize" class="flex items-center space-x-2 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white font-semibold text-xs px-6 py-2.5 rounded-lg transition shadow-md shadow-indigo-600/30">
+                <i data-lucide="check" class="w-4 h-4"></i>
+                <span>Authorize &amp; Resume Engine</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="action-success-banner" class="hidden"></div>
+      `;
+
+      document.getElementById('review-detail-container').innerHTML = html;
+      lucide.createIcons();
+    }
+
+    function copyVendorEmailDraft() {
+      if (currentThreadData?.vendor_email?.body) {
+        navigator.clipboard.writeText(currentThreadData.vendor_email.body);
+        alert("Vendor negotiation email draft copied to clipboard!");
+      }
+    }
+
+    // Handle Human Authorization & Resume
+    async function handleApproveCheckpoint(threadId, actionId) {
+      const btn = document.getElementById('btn-authorize');
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Dispatches to Jira &amp; Slack...</span>`;
+      btn.disabled = true;
+
+      const overrideRedline = document.getElementById('live-redline-input').value;
+      const overrideOwner = document.getElementById('select-owner').value;
+
+      try {
+        const res = await fetch(`/api/v1/reviews/${threadId}/resume`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            reviewer_email: "compliance-officer@apexfinancial.com",
+            decisions: [{
+              action_id: actionId,
+              approved: true,
+              override_redline: overrideRedline,
+              override_assignee: overrideOwner
+            }]
+          })
+        });
+
+        const data = await res.json();
+        const dispatched = data.dispatched_actions?.[0] || {};
+
+        const banner = document.getElementById('action-success-banner');
+        banner.className = "bg-emerald-50 dark:bg-emerald-950/90 border border-emerald-300 dark:border-emerald-600 rounded-xl p-4 text-xs text-emerald-900 dark:text-emerald-200 block space-y-1.5 shadow-sm";
+        banner.innerHTML = `
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-sm text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
+              <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+              Execution Successful: Autonomous Action Dispatched!
+            </h4>
+            <span class="font-mono text-[11px] text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/60 px-2 py-0.5 rounded font-bold">Jira: ${dispatched.jira_issue_key || 'RISK-104'}</span>
+          </div>
+          <p class="text-slate-700 dark:text-slate-300">
+            Agent state resumed. Created ticket <strong>${dispatched.jira_issue_key || 'RISK-104'}</strong> assigned to <strong>${dispatched.owner}</strong>.
+            Interactive Block Kit alert dispatched to <strong>#compliance-risk-alerts</strong>.
+          </p>
+          <div class="pt-2 flex items-center gap-3">
+            <button onclick="switchTab('dispatch')" class="underline text-emerald-700 dark:text-emerald-300 font-bold hover:text-emerald-900">
+              View Dispatched Jira Task &rarr;
+            </button>
+          </div>
+        `;
+        lucide.createIcons();
+
+        setTimeout(() => {
+          loadPendingReviews();
+        }, 1200);
+
+      } catch (e) {
+        alert("Error resuming agent: " + e);
+      }
+    }
+
+    function handleRejectCheckpoint(threadId) {
+      alert("Checkpoint dismissed without external ticket creation.");
+      loadPendingReviews();
+    }
+
+    // Presets in Sandbox
+    function loadPresetClause(type) {
+      if (type === 'breach') {
+        document.getElementById('sb-section-num').value = "Section 14.2";
+        document.getElementById('sb-page-num').value = 6;
+        document.getElementById('sb-clause-text').value = "In the event of a confirmed security incident or unauthorized access resulting in disclosure of Customer confidential records, Vendor shall notify Customer in writing within five (5) business days after internal technical confirmation that an unauthorized disclosure has occurred.";
+      } else if (type === 'residency') {
+        document.getElementById('sb-section-num').value = "Section 8.1";
+        document.getElementById('sb-page-num').value = 4;
+        document.getElementById('sb-clause-text').value = "Vendor reserves the right to transfer, mirror, and store Customer telemetry and analytical audit logs across any of Vendor’s global cloud clusters (including data centers located in North America, Southeast Asia, and Eastern Europe) without prior written notice, to ensure continuous platform load balancing.";
+      } else if (type === 'liability') {
+        document.getElementById('sb-section-num').value = "Section 21.1";
+        document.getElementById('sb-page-num').value = 9;
+        document.getElementById('sb-clause-text').value = "Vendor’s total cumulative liability arising out of or related to this Agreement, including data breach damages, regulatory penalties, or confidentiality indemnities, shall be strictly capped at the total amount actually paid by Customer to Vendor in the one (1) month preceding the incident ($4,850 USD).";
+      } else if (type === 'encryption') {
+        document.getElementById('sb-section-num').value = "Section 18.1";
+        document.getElementById('sb-page-num').value = 8;
+        document.getElementById('sb-clause-text').value = "Customer records stored in multi-tenant buckets shall be protected by standard platform-level encryption (AES-128 or Vendor proprietary key schemes). Custom key management is available solely under premium enterprise add-on tiers.";
+      }
+    }
+
+    // Run Clause Analysis from Sandbox
+    async function runClauseAnalysis() {
+      const btn = document.getElementById('btn-run-analysis');
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Analyzing...</span>`;
+      btn.disabled = true;
+
+      const title = document.getElementById('sb-contract-title').value;
+      const section = document.getElementById('sb-section-num').value;
+      const page = parseInt(document.getElementById('sb-page-num').value) || 1;
+      const text = document.getElementById('sb-clause-text').value;
+
+      try {
+        const res = await fetch('/api/v1/analyze/clause', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            contract_title: title,
+            section_number: section,
+            page_number: page,
+            clause_text: text
+          })
+        });
+
+        const data = await res.json();
+        const f = data.finding;
+        const resContainer = document.getElementById('sandbox-result-container');
+        resContainer.classList.remove('hidden');
+
+        resContainer.innerHTML = `
+          <div class="bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-500/50 rounded-2xl p-6 space-y-4 shadow-sm dark:shadow-xl">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold uppercase px-2 py-0.5 rounded ${f.severity_classification === 'CRITICAL' ? 'bg-red-100 text-red-800 border border-red-200 dark:bg-red-950 dark:text-red-400 dark:border-red-800' : 'bg-amber-100 text-amber-800 border border-amber-200 dark:bg-amber-950 dark:text-amber-400 dark:border-amber-800'}">
+                  ${f.severity_classification} RISK
+                </span>
+                <span class="text-xs font-mono text-indigo-700 dark:text-indigo-300 font-bold">CRS: ${f.quantitative_metrics.composite_risk_score} / 10.0</span>
+              </div>
+              <span class="text-xs text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Added to Live Review Queue
+              </span>
+            </div>
+
+            ${f.explainable_ai ? `
+              <div class="p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-xs space-y-1">
+                <span class="text-[10px] uppercase font-bold text-indigo-700 dark:text-indigo-300">Explainable AI Claim</span>
+                <p class="text-slate-800 dark:text-slate-200 font-medium">${f.explainable_ai.claim}</p>
+                <p class="text-slate-600 dark:text-slate-400 text-[11px] mt-1"><strong>Reasoning:</strong> ${f.explainable_ai.conflict_reasoning}</p>
+              </div>
+            ` : ''}
+
+            <div>
+              <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold block mb-1">Generated Legal Replacement Redline</span>
+              <div class="p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg font-mono text-xs text-emerald-800 dark:text-emerald-400">
+                ${f.remediation.proposed_contract_redline}
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+              <span class="text-xs text-slate-500 dark:text-slate-400">Owner: <strong class="text-slate-800 dark:text-slate-200">${f.remediation.suggested_owner}</strong> &bull; Target SLA: <strong>${f.remediation.sla_resolution_days} Days</strong></span>
+              <button onclick="switchTab('reviews'); selectThread('${data.thread_id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2 rounded-lg font-medium transition flex items-center gap-1 shadow-sm">
+                <span>Open in Review Dashboard</span> &rarr;
+              </button>
+            </div>
+          </div>
+        `;
+        lucide.createIcons();
+        btn.innerHTML = `<i data-lucide="play" class="w-4 h-4"></i><span>Run 5-Stage Agent Analysis</span>`;
+        btn.disabled = false;
+        loadPendingReviews();
+
+      } catch (err) {
+        alert("Analysis error: " + err);
+        btn.disabled = false;
+      }
+    }
+
+    // Handle File Upload
+    async function handleFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const statusDiv = document.getElementById('upload-status');
+      statusDiv.innerHTML = `<span class="text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5"><i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Ingesting and parsing ${file.name}...</span>`;
+      lucide.createIcons();
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("contract_title", file.name);
+
+      try {
+        const res = await fetch('/api/v1/analyze/upload', {
+          method: 'POST',
+          body: formData
+        });
+        const d = await res.json();
+        statusDiv.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400 font-semibold">${d.message}</span>`;
+        loadPendingReviews();
+      } catch (err) {
+        statusDiv.innerHTML = `<span class="text-red-500">Upload error: ${err}</span>`;
+      }
+    }
+
+    // Load Gap Matrix
+    async function loadGapMatrix() {
+      try {
+        const res = await fetch('/api/v1/matrix/gap-overview');
+        const data = await res.json();
+        const tbody = document.getElementById('gap-matrix-tbody');
+        tbody.innerHTML = data.rows.map(r => `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
+            <td class="py-3 px-4 font-bold text-slate-900 dark:text-white whitespace-nowrap">${r.domain}</td>
+            <td class="py-3 px-4 text-slate-700 dark:text-slate-300">
+              <span class="font-mono text-[10px] text-blue-600 dark:text-blue-400 block font-bold">${r.policy_code}</span>
+              ${r.policy_requirement}
+            </td>
+            <td class="py-3 px-4 text-slate-600 dark:text-slate-400 font-serif italic">${r.contract_terms}</td>
+            <td class="py-3 px-4 whitespace-nowrap">
+              ${r.status === 'CRITICAL_GAP' ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 dark:bg-red-950 border border-red-300 dark:border-red-800 text-red-800 dark:text-red-300">🔴 Critical Gap</span>' :
+                r.status === 'HIGH_GAP' ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 dark:bg-amber-950 border border-amber-300 dark:border-amber-800 text-amber-800 dark:text-amber-300">🟠 High Gap</span>' :
+                '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300">🟢 Compliant</span>'}
+            </td>
+            <td class="py-3 px-4 text-slate-700 dark:text-slate-300">
+              <span class="font-semibold text-rose-700 dark:text-rose-300 block">${r.statutory_law}</span>
+              <span class="text-[11px] text-slate-500 dark:text-slate-400">${r.exposure}</span>
+            </td>
+            <td class="py-3 px-4 font-mono text-[11px] text-emerald-800 dark:text-emerald-400">${r.recommended_action}</td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        console.error("Could not load gap matrix", e);
+      }
+    }
+
+    // Load Jira Tasks
+    async function loadJiraTasks() {
+      try {
+        const res = await fetch('/api/v1/jira/tasks');
+        const data = await res.json();
+        document.getElementById('badge-dispatched-count').innerText = data.length;
+
+        const container = document.getElementById('jira-tasks-list');
+        container.innerHTML = data.map(t => `
+          <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm dark:shadow-none">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-mono font-bold text-indigo-700 dark:text-indigo-400">${t.key}</span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded ${t.priority === 'Highest' ? 'bg-red-100 text-red-800 border border-red-200 dark:bg-red-950 dark:text-red-400 dark:border-red-800' : 'bg-amber-100 text-amber-800 border border-amber-200 dark:bg-amber-950 dark:text-amber-400'}">
+                  ${t.priority}
+                </span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded ${t.status === 'RESOLVED' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800' : t.status === 'OVERDUE' ? 'bg-rose-100 text-rose-800 border border-rose-300 dark:bg-rose-950 dark:text-rose-300 dark:border-rose-800' : 'bg-blue-100 text-blue-800 border border-blue-200 dark:bg-blue-950 dark:text-blue-300'}">
+                  ${t.status}
+                </span>
+              </div>
+              <h4 class="text-sm font-bold text-slate-900 dark:text-white">${t.summary}</h4>
+              <p class="text-xs text-slate-600 dark:text-slate-400">Assignee: <strong class="text-slate-800 dark:text-slate-300">${t.assignee}</strong> &bull; Due: ${t.due_date ? t.due_date.slice(0,10) : '2 Days'}</p>
+              ${t.resolved_by ? `<p class="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold">✓ Resolved by ${t.resolved_by} (${t.resolved_at?.slice(0,16)})</p>` : ''}
+            </div>
+
+            <div class="flex items-center gap-2">
+              <a href="${t.url}" target="_blank" class="px-3 py-1.5 rounded-lg text-xs bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition flex items-center gap-1 shadow-sm">
+                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                <span>Atlassian Link</span>
+              </a>
+
+              ${t.status !== 'RESOLVED' ? `
+                <button onclick="resolveJiraTask('${t.key}')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center gap-1 shadow-sm">
+                  <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                  <span>Simulate Mark 'Done' in Jira (Bi-Directional Webhook)</span>
+                </button>
+              ` : `
+                <span class="text-xs text-emerald-800 dark:text-emerald-400 font-semibold flex items-center gap-1 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/40 rounded-lg border border-emerald-300 dark:border-emerald-800">
+                  <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Closed in Audit Trail
+                </span>
+              `}
+            </div>
+          </div>
+        `).join('');
+
+        // Also load Slack feed
+        const slackRes = await fetch('/api/v1/sla/status');
+        const slackData = await slackRes.json();
+        const slackContainer = document.getElementById('slack-alerts-list');
+        if (slackData.slack_alerts && slackData.slack_alerts.length > 0) {
+          slackContainer.innerHTML = slackData.slack_alerts.map(s => `
+            <div class="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl space-y-2 shadow-sm dark:shadow-none">
+              <div class="flex items-center justify-between text-xs text-slate-500">
+                <span class="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-300">
+                  <i data-lucide="hash" class="w-3.5 h-3.5 text-slate-400"></i>
+                  #compliance-risk-alerts
+                </span>
+                <span class="font-mono text-[10px]">${s.dispatched_at || 'Just Now'}</span>
+              </div>
+              <div class="p-3 bg-white dark:bg-slate-900 border-l-4 border-indigo-600 rounded-r text-xs space-y-1 shadow-sm dark:shadow-none">
+                <p class="font-bold text-slate-900 dark:text-white">${s.summary}</p>
+                <p class="text-slate-600 dark:text-slate-400">Assigned: <strong class="text-slate-800 dark:text-slate-200">${s.owner}</strong> &bull; Priority: <strong class="text-rose-600 dark:text-rose-400">${s.severity}</strong></p>
+                <div class="p-2 bg-slate-50 dark:bg-slate-950 rounded font-mono text-[11px] text-emerald-800 dark:text-emerald-400 mt-2 border border-slate-200 dark:border-slate-800">
+                  ${s.redline}
+                </div>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          slackContainer.innerHTML = `<p class="text-xs text-slate-500">Authorize a review checkpoint to view real-time Slack Block Kit alert cards.</p>`;
+        }
+
+        lucide.createIcons();
+      } catch (e) {
+        console.error("Could not load Jira tasks", e);
+      }
+    }
+
+    async function resolveJiraTask(key) {
+      const res = await fetch(`/api/v1/jira/tasks/${key}/resolve`, { method: 'POST' });
+      const d = await res.json();
+      loadJiraTasks();
+      loadWatchdogData();
+      alert(`Jira Issue ${key} resolved! Bi-directional webhook received and audit ledger updated.`);
+    }
+
+    // Trigger SLA Watchdog Breach Simulation
+    async function triggerSlaBreachSimulation() {
+      const btn = document.getElementById('btn-simulate-breach');
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Escalating...</span>`;
+      btn.disabled = true;
+
+      const res = await fetch('/api/v1/sla/simulate-breach', { method: 'POST' });
+      const d = await res.json();
+      const rec = d.escalation_record;
+
+      const display = document.getElementById('escalation-simulation-display');
+      display.innerHTML = `
+        <div class="bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 rounded-xl p-5 space-y-3">
+          <div class="flex items-center justify-between border-b border-rose-200 dark:border-rose-800/60 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-red-500 animate-ping"></span>
+              <h4 class="font-bold text-sm text-rose-800 dark:text-red-300">Executive HTML Escalation Memo Dispatched to Department Head</h4>
+            </div>
+            <span class="text-xs font-mono text-red-800 dark:text-red-200 bg-red-100 dark:bg-red-900 px-2 py-0.5 rounded font-bold">T+72h Breach Triggered</span>
+          </div>
+
+          <div class="text-xs space-y-1 text-slate-700 dark:text-slate-300">
+            <p><strong>To:</strong> ${rec.manager_name} &lt;${rec.manager_email}&gt;</p>
+            <p><strong>Cc:</strong> ${rec.employee_name} &lt;${rec.employee_email}&gt;</p>
+            <p><strong>Subject:</strong> <span class="text-rose-700 dark:text-rose-300 font-semibold">${rec.subject}</span></p>
+            <p><strong>Overdue Duration:</strong> <span class="text-rose-700 dark:text-rose-400 font-bold">${rec.days_overdue} days past SLA</span></p>
+          </div>
+
+          <!-- HTML Preview Box -->
+          <div class="p-4 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-mono text-slate-800 dark:text-slate-300 overflow-x-auto max-h-60 custom-scrollbar shadow-inner">
+            ${rec.html_body}
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+      btn.innerHTML = `<i data-lucide="alert-octagon" class="w-4 h-4"></i><span>Simulate &gt;3-Day SLA Breach (Trigger Escalation)</span>`;
+      btn.disabled = false;
+      loadWatchdogData();
+      loadJiraTasks();
+    }
+
+    // Load Watchdog Audit Logs
+    async function loadWatchdogData() {
+      const res = await fetch('/api/v1/sla/status');
+      const data = await res.json();
+
+      const webhookList = document.getElementById('webhook-logs-list');
+      if (data.webhook_audit_trail && data.webhook_audit_trail.length > 0) {
+        webhookList.innerHTML = data.webhook_audit_trail.map(w => `
+          <div class="p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+              <i data-lucide="arrow-left-right" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+              <span class="font-mono text-indigo-700 dark:text-indigo-300 font-bold">${w.jira_key}</span>
+              <span class="text-slate-700 dark:text-slate-300">${w.detail}</span>
+            </div>
+            <span class="text-[10px] text-slate-500 font-mono">${w.timestamp?.slice(0, 19)}</span>
+          </div>
+        `).join('');
+      } else {
+        webhookList.innerHTML = `<p class="text-slate-500 text-xs">No webhooks received yet. Click "Simulate Mark 'Done' in Jira" on the Enterprise Dispatch tab to test bi-directional synchronization.</p>`;
+      }
+      lucide.createIcons();
+    }
+
+    // Load Benchmarks & Knowledge Base
+    async function loadBenchmarks() {
+      const res = await fetch('/api/v1/benchmarks');
+      const data = await res.json();
+      const container = document.getElementById('benchmarks-container');
+
+      container.innerHTML = `
+        <!-- Statutory Regulations -->
+        <div class="space-y-4">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400 flex items-center gap-2">
+            <i data-lucide="scale" class="w-4 h-4"></i> Master Statutory Laws
+          </h3>
+          ${data.regulations.map(reg => `
+            <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-4 rounded-xl space-y-2">
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-bold text-slate-900 dark:text-white">${reg.name}</h4>
+                <span class="text-[10px] text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-900 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-800">${reg.jurisdiction}</span>
+              </div>
+              <p class="text-[11px] text-slate-600 dark:text-slate-400">${reg.statutory_penalty_summary}</p>
+              <div class="pt-2 border-t border-slate-200 dark:border-slate-900 space-y-1">
+                ${reg.mandates.map(m => `
+                  <div class="text-[11px] flex items-baseline justify-between">
+                    <span class="text-rose-700 dark:text-rose-300 font-mono font-semibold">${m.section}: ${m.topic}</span>
+                    <span class="text-slate-500">${m.sla_hours_max ? m.sla_hours_max + 'h limit' : ''}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- Internal Policies -->
+        <div class="space-y-4">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-blue-700 dark:text-blue-400 flex items-center gap-2">
+            <i data-lucide="shield-check" class="w-4 h-4"></i> Internal Corporate Policies
+          </h3>
+          ${data.policies.map(p => `
+            <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-4 rounded-xl space-y-2">
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-bold text-slate-900 dark:text-white">${p.policy_code}: ${p.title}</h4>
+                <span class="text-[10px] text-indigo-700 dark:text-indigo-300 font-mono font-bold">${p.version}</span>
+              </div>
+              <p class="text-[11px] text-slate-600 dark:text-slate-400">Department: ${p.department}</p>
+              <div class="pt-2 border-t border-slate-200 dark:border-slate-900 space-y-1.5">
+                ${p.rules.map(r => `
+                  <div class="text-[11px] space-y-0.5">
+                    <span class="text-blue-700 dark:text-blue-300 font-mono font-semibold">${r.clause_code} (${r.domain})</span>
+                    <p class="text-slate-600 dark:text-slate-400">${r.mandate}</p>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // Initialize App
+    window.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      loadEngineStatus();
+      loadPendingReviews();
+      loadPresetClause('breach');
+      loadGapMatrix();
+      updateFeedbackBadge();
+      lucide.createIcons();
+    });
+  </script>
+
+</body>
+</html>

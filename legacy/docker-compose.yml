@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  riskwise-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: riskwise_ai_app
+    ports:
+      - "8000:8000"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.0-flash}
+      - DATABASE_URL=postgresql://postgres:postgres@riskwise-db:5432/riskwise_db
+      - JIRA_BASE_URL=https://apexfinancial.atlassian.net
+      - JIRA_PROJECT_KEY=RISK
+    depends_on:
+      - riskwise-db
+    restart: unless-stopped
+
+  riskwise-db:
+    image: pgvector/pgvector:pg16
+    container_name: riskwise_ai_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: riskwise_db
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pgdata:
