@@ -1,0 +1,13 @@
+OUTSOURCING SERVICES AGREEMENT
+1. SERVICES
+1.1 Provider shall perform customer support and KYC document processing for Client.
+2. PERSONNEL AND SUBCONTRACTORS
+2.1 Provider may subcontract any part of the Services to its affiliates or third parties at its discretion.
+3. DATA
+3.1 Provider may process and store Client customer records at its delivery centres in the Philippines, Singapore and any other country where Provider operates.
+4. INCIDENTS
+4.1 Provider will inform Client of any data incident or unauthorized access within a commercially reasonable time.
+5. LIABILITY
+5.1 Provider's total liability shall not exceed the fees paid in the three (3) months preceding the claim.
+6. AUDIT
+6.1 Client may audit Provider once per year on sixty days' notice.

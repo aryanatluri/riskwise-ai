@@ -1,0 +1,10 @@
+SOFTWARE LICENCE AND SUPPORT AGREEMENT
+1. SECURITY
+1.1 Licensor shall encrypt data in transit using TLS 1.0 or higher and data at rest using AES-256.
+1.2 Licensor shall notify Licensee of any security incident affecting Licensee data within 72 hours.
+2. LIABILITY
+2.1 Licensor's aggregate liability, including for data breach, shall be limited to USD 50,000.
+3. TERMINATION
+3.1 Upon termination, Licensor shall provide exit assistance for ninety days and return of Licensee data.
+4. INSPECTION
+4.1 Licensee and its regulators shall have the right to inspect Licensor's facilities.

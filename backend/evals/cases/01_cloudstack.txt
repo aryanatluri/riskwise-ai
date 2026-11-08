@@ -1,0 +1,44 @@
+================================================================================
+MASTER SERVICES & CLOUD SUBSCRIPTION AGREEMENT (DEMO EXHIBIT)
+================================================================================
+Counterparty: CloudStack Global Services Inc. ("Vendor")
+Customer: Apex Financial Enterprises Ltd. ("Customer")
+Governing Jurisdiction: India / International
+Contract Code: CSA-2026-APEX-8821
+Classification: Third-Party Vendor Cloud Hosting & Processing
+
+--------------------------------------------------------------------------------
+1. SCOPE OF SERVICES
+1.1 CloudStack Inc. shall provide enterprise data ingestion, cloud storage, and automated
+telemetry analysis services to Customer under the specifications of Schedule A.
+
+--------------------------------------------------------------------------------
+8. DATA RESIDENCY AND PROCESSING
+8.1 Global Telemetry Routing: Vendor reserves the right to transfer, mirror, and store Customer
+telemetry and analytical audit logs across any of Vendor’s global cloud clusters (including data
+centers located in North America, Southeast Asia, and Eastern Europe) without prior written notice,
+to ensure continuous platform load balancing.
+
+--------------------------------------------------------------------------------
+14. SECURITY INCIDENTS AND BREACH NOTIFICATIONS
+14.1 Vendor will implement commercially reasonable technical safeguards to protect Customer data.
+14.2 Breach Notification SLA: In the event of a confirmed security incident or unauthorized
+access resulting in disclosure of Customer confidential records, Vendor shall notify Customer in
+writing within five (5) business days after internal technical confirmation that an unauthorized
+disclosure has occurred.
+14.3 Customer agrees that failure to report within this window shall not constitute a material
+breach of this Agreement unless direct intentional gross misconduct is adjudicated.
+
+--------------------------------------------------------------------------------
+18. ENCRYPTION & KEY MANAGEMENT
+18.1 Customer records stored in multi-tenant buckets shall be protected by standard platform-level
+encryption (AES-128 or Vendor proprietary key schemes). Custom key management is available solely
+under premium enterprise add-on tiers.
+
+--------------------------------------------------------------------------------
+21. LIMITATION OF LIABILITY
+21.1 Aggregate Liability Cap: To the maximum extent permitted by applicable law, Vendor’s total
+cumulative liability arising out of or related to this Agreement, including data breach damages,
+regulatory penalties, or confidentiality indemnities, shall be strictly capped at the total amount
+actually paid by Customer to Vendor in the one (1) month preceding the incident ($4,850 USD).
+================================================================================
