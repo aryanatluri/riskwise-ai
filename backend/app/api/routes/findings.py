@@ -172,7 +172,7 @@ def decide(finding_id: str, body: Decision, ctx: OrgContext = Depends(reviewer))
     audit.record(
         ctx.db,
         ctx.org_id,
-        f"finding.{body.decision}d",
+        "finding.approved" if body.decision == "approve" else "finding.rejected",
         actor=ctx.user,
         target_type="finding",
         target_id=f.id,

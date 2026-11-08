@@ -73,6 +73,10 @@ def test_upload_analyze_review_flow(client, demo_contract):
         client.post(f"/api/v1/findings/{top['id']}/decision", headers=h, json={"decision": "reject"}).status_code == 409
     )
 
+    second = findings[1]["id"]
+    r = client.post(f"/api/v1/findings/{second}/decision", headers=h, json={"decision": "reject", "notes": "ok"})
+    assert r.status_code == 200 and r.json()["status"] == "rejected"
+
     # No integrations configured yet.
     assert client.post(f"/api/v1/findings/{top['id']}/dispatch", headers=h).status_code == 422
 
@@ -80,14 +84,21 @@ def test_upload_analyze_review_flow(client, demo_contract):
     assert "CloudStack MSA" in csv_text and "IN-CERTIN-6H" in csv_text
 
     actions = [a["action"] for a in client.get("/api/v1/audit", headers=h).json()]
-    for a in ("org.created", "contract.uploaded", "analysis.completed", "finding.approved", "findings.exported"):
+    for a in (
+        "org.created",
+        "contract.uploaded",
+        "analysis.completed",
+        "finding.approved",
+        "finding.rejected",
+        "findings.exported",
+    ):
         assert a in actions
 
     # Re-analysis keeps decided findings and replaces open ones.
     cid = out["contract"]["id"]
     assert client.post(f"/api/v1/contracts/{cid}/analyze", headers=h).status_code == 200
     statuses = sorted(f["status"] for f in client.get(f"/api/v1/findings?contract_id={cid}", headers=h).json())
-    assert statuses.count("approved") == 1 and statuses.count("open") == 6
+    assert statuses.count("approved") == 1 and statuses.count("rejected") == 1 and statuses.count("open") == 6
 
 
 def test_tenant_isolation(client, demo_contract):
