@@ -65,9 +65,17 @@ hundreds of LLM-checked clauses become common.
 Avoids linking accounts by email across identity providers, which is a known takeover risk.
 Proper email invitations come with the frontend.
 
+## Web app look: the redline
+
+Reviewers in banks live in marked-up contracts, so the one bold element is the redline:
+the risky words struck through in correction red, the proposed wording in pen blue
+beneath. Everything else is quiet: ledger green for structure, Source Serif for contract
+text, Public Sans (a government typeface) for the interface, tables instead of card
+grids. Fonts are bundled, not loaded from Google, because bank networks often block
+third-party font CDNs.
+
 ## Known gaps (next up)
 
-- Web frontend (React + Vite) to replace `legacy/frontend/index.html`
 - Policy upload: extract rules from a client's policy PDF with the LLM, then human confirmation
 - PDF and DOCX exports of findings and redlines
 - Microsoft Teams notifications

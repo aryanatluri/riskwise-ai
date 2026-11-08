@@ -12,8 +12,8 @@ apply to you, then approve, assign and track the fixes.
 - **Built for audit.** Every decision lands in an append-only audit log. Tenants are
   isolated twice: in the app and with Postgres row-level security.
 
-> Status: backend v0.2 (API, engine, workflow). The web frontend is being rebuilt; the
-> original prototype UI and the no-login sales demo live in `legacy/`.
+> Status: v0.2. Backend (API, engine, workflow) and web app are in place. The original
+> prototype and the no-login sales demo for Dad live in `legacy/`.
 
 ## How a contract is analysed
 
@@ -53,7 +53,18 @@ Open http://localhost:8000/docs. In dev mode, get a token from `POST /api/v1/dev
 create an org with `POST /api/v1/orgs`, then send `Authorization: Bearer <token>` and
 `X-Org-Id: <org id>` on every call.
 
-Try it with the sample contract:
+Then the web app, in a second terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev        # http://localhost:5173, proxies /api to the backend on :8000
+```
+
+Sign in with any email (dev mode), create an organization, and upload
+`backend/tests/fixtures/cloudstack.txt` from the Contracts page.
+
+Or call the API directly with the sample contract:
 
 ```bash
 curl -X POST localhost:8000/api/v1/contracts \
@@ -75,7 +86,9 @@ enforced (CI does this).
 ## Deploy
 
 **Hosted (free tiers):** API container on Google Cloud Run, Postgres + Auth on Supabase,
-frontend on Cloudflare Pages, hourly SLA sweep from GitHub Actions
+frontend on Cloudflare Pages (`npm run build`, publish `frontend/dist`, set
+`VITE_API_URL`, `VITE_AUTH_MODE=supabase`, `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`),
+hourly SLA sweep from GitHub Actions
 (`.github/workflows/sla-sweep.yml`). Set `AUTH_MODE=oidc` with your Supabase issuer and
 JWKS URL. Run `alembic upgrade head` as a one-off job before each release.
 
